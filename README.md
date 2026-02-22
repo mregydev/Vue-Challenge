@@ -29,6 +29,12 @@ This will be discussed during the interview.
 > [!TIP]
 > :art: **(Extra Bonus)** Do not use media queries.
 
+### Implementation
+
+We used a **flex** solution for responsiveness. The flex layout is applied to the `.wrapper` in `assets/css/main.css`, which wraps the main content area (nav, main, sidebar). This makes all pages responsive across desktop, tablet, and mobile—without media queries—because the flex items naturally wrap and reflow as the viewport shrinks.
+
+We could also use **CSS Grid** (e.g. `grid-template-columns: repeat(auto-fill, minmax(...))`) to achieve responsiveness, but we chose flex because it is simpler to write and easier to reason about for this layout.
+
 ## 2. To-do list
 
 Navigate to the `/user/[id]` page that fetch user's to-do list.

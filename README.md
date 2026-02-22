@@ -49,6 +49,12 @@ Few examples:
 > [!TIP]
 > :art: **(Extra Bonus)** Do not use JavaScript.
 
+### Implementation
+
+We apply filters through the `status` query parameter. We use **VueUse** (`useUrlSearchParams`) to read the query param from the URL. When the user checks or unchecks a filter checkbox (Show completed / Show pending), we update the query param via Vue Router—no page reload. The page reads `status` from the URL and filters the list accordingly (`completed`, `pending`, or `all`).
+
+The same approach can be used for other filters such as the limit of displayed tasks: add a `limit` query param and read it to slice the list. Likewise, check/uncheck state for individual todo items can be driven by query params (e.g. `completedIds=1,2,3`) so that the URL fully reflects the UI and can be shared or bookmarked.
+
 ## 3. Page loading performance
 
 Navigate to the `/gallery` page which contains a list of photos and some user statistics. This page is meant to be publicly accessible.

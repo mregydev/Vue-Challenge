@@ -10,6 +10,7 @@ html {
 
 body {
   font-family: Arial, sans-serif;
+  margin: 0;
 }
 
 header {
@@ -21,38 +22,48 @@ header {
 }
 
 .wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   width: 100%;
-  white-space: nowrap;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 1rem 1rem;
 }
 
 nav {
-  display: inline-block;
-  vertical-align: top;
+  display: flex;
+  flex-direction: column;
   background-color: #dbfbdb;
   padding: 10px;
-  height: 500px;
-  width: 20%;
+  min-height: 280px;
+  flex: 1 1 220px;
+  min-width: 190px;
 }
 
 main {
-  display: inline-block;
-  vertical-align: top;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   background-color: #e2eafc;
   padding: 20px;
-  width: 80%;
+  flex: 3 1 520px;
+  min-width: 260px;
 
 }
 
 section {
-  display: inline-block;
-  vertical-align: top;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 260px;
   background-color: #c1d3fe;
   padding: 15px;
-  margin: 15px;
+  margin: 0;
 }
 
 article {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   background-color: #e0ffff;
   padding: 10px;
   width: 100%;
@@ -61,6 +72,8 @@ article {
 aside {
   background-color: #fffacd;
   padding: 20px;
+  flex: 1 1 220px;
+  min-width: 220px;
 }
 
 footer {

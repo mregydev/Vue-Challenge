@@ -1,19 +1,22 @@
 <template>
-  <div>
+  <div class="gallery-page">
     <h2>Gallery</h2>
     <div v-if="pending">Loading…</div>
     <div v-else-if="error">Error loading images: {{ error.message }}</div>
-    <div v-else>
+    <div v-else class="gallery-users">
       <div
+        class="gallery-user-card"
         v-if="Object.keys(sortByUser).length !== 0"
         v-for="(userGallery, index) in Object.values(sortByUser)"
         :key="index"
       >
         <hr v-if="index !== 0" />
         <h2>{{ userGallery.name }}</h2>
-        <p>Albums: {{ userGallery.albums.length }}</p>
-        <p>Posts: {{ userGallery.posts.length }}</p>
-        <p>Comments: {{ userGallery.comments.length }}</p>
+        <div class="gallery-user-stats">
+          <p>Albums: {{ userGallery.albums.length }}</p>
+          <p>Posts: {{ userGallery.posts.length }}</p>
+          <p>Comments: {{ userGallery.comments.length }}</p>
+        </div>
         <div class="gallery">
           <template v-for="img in userGallery.photos" :key="img.id">
             <img :src="img.picture" :alt="img.title" class="photo" />
@@ -96,10 +99,39 @@ if (error.value) {
 </script>
 
 <style scoped>
+.gallery-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gallery-users {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.gallery-user-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gallery-user-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+}
+
+.gallery-user-stats p {
+  margin: 0;
+  flex: 1 1 140px;
+}
+
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1svw;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 1.5vw, 1rem);
 }
 .img-gallery {
   display: flex;
@@ -107,8 +139,12 @@ if (error.value) {
   gap: 10px;
 }
 .photo {
-  max-width: 100%;
+  flex: 1 1 220px;
+  width: min(100%, 340px);
+  min-width: 180px;
   height: auto;
   object-fit: cover;
+  border-radius: 0.6rem;
+  border: 1px solid #e4e4e4;
 }
 </style>

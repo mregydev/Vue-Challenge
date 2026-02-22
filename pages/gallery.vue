@@ -1,14 +1,13 @@
 <template>
   <div class="gallery-page">
     <h2>Gallery</h2>
-    <div v-if="pending">Loading…</div>
-    <div v-else-if="error">Error loading images: {{ error.message }}</div>
+    <div v-if="usersPending || galleryPending">Loading…</div>
+    <div v-else-if="usersError">Error loading users: {{ usersError.message }}</div>
     <div v-else class="gallery-users">
       <div
+        v-for="(userGallery, index) in usersWithGallery"
+        :key="userGallery.id"
         class="gallery-user-card"
-        v-if="Object.keys(sortByUser).length !== 0"
-        v-for="(userGallery, index) in Object.values(sortByUser)"
-        :key="index"
       >
         <hr v-if="index !== 0" />
         <h2>{{ userGallery.name }}</h2>
@@ -19,8 +18,23 @@
         </div>
         <div class="gallery">
           <template v-for="img in userGallery.photos" :key="img.id">
-            <img :src="img.picture" :alt="img.title" class="photo" />
+            <div class="photo-wrap">
+              <img
+                :src="img.picture"
+                :alt="img.title"
+                class="photo"
+                loading="lazy"
+                @load="onImageLoad(userGallery.id)"
+              />
+            </div>
           </template>
+          <div
+            v-if="isUserLoading(userGallery.id)"
+            class="gallery-loading"
+            aria-hidden="true"
+          >
+            Loading images…
+          </div>
         </div>
       </div>
     </div>
@@ -29,72 +43,76 @@
 
 <script setup>
 const {
-  data: images,
-  pending,
-  error,
-} = await useFetch('/api/gallery', { lazy: true });
+  data: usersData,
+  pending: usersPending,
+  error: usersError,
+} = await useFetch('/api/users', { lazy: true });
 
-const users = ref([]);
-onMounted(async () => {
-  users.value = await fetch('https://jsonplaceholder.typicode.com/users').then(
-    (res) => res.json()
-  );
+const users = computed(() => usersData.value?.users ?? []);
 
-  await loadUserStatistics();
+const galleryByUser = ref({});
+const galleryPending = ref(false);
+
+watch(
+  users,
+  async (userList) => {
+    if (!userList?.length) return;
+    galleryPending.value = true;
+    try {
+      const results = await Promise.all(
+        userList.map((u) =>
+          $fetch(`/api/gallery/${u.id}`).then((photos) => ({
+            userId: u.id,
+            photos,
+          }))
+        )
+      );
+      galleryByUser.value = Object.fromEntries(
+        results.map((r) => [r.userId, r.photos ?? []])
+      );
+    } finally {
+      galleryPending.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+const usersWithGallery = computed(() => {
+  const list = users.value;
+  const gallery = galleryByUser.value;
+  if (!list?.length) return [];
+  return list
+    .map((u) => ({
+      ...u,
+      photos: gallery[u.id] ?? [],
+    }))
+    .filter((u) => (u.photos || []).length > 0);
 });
 
-const sortByUser = computed(() => {
-  if (!images.value || !users.value.length) {
-    return {};
-  }
+const loadedCount = ref({});
 
-  return images.value.reduce((acc, img) => {
-    const user = users.value.find((u) => u.id === img.userId);
-    if (!user) {
-      return acc;
+watch(
+  usersWithGallery,
+  (u) => {
+    if (u?.length) {
+      loadedCount.value = Object.fromEntries(u.map((user) => [user.id, 0]));
     }
-    if (!acc[img.userId]) {
-      acc[img.userId] = {
-        name: img.userName,
-        photos: [],
-        albums: user.albums || [],
-        posts: user.posts || [],
-        comments: user.comments || [],
-      };
-    }
-    acc[img.userId].photos.push(img);
-    return acc;
-  }, {});
-});
+  },
+  { immediate: true }
+);
 
-/**
- * Load specific user statistics
- */
-async function loadUserStatistics() {
-  for (const user of users.value) {
-    (user.albums = []), (user.posts = []), (user.comments = []);
-
-    // Fetch user Albums
-    await fetch(`https://jsonplaceholder.typicode.com/users/${user.id}/albums`)
-      .then((res) => res.json())
-      .then((albums) => user.albums.push(...albums));
-
-    // Fetch user Posts
-    await fetch(`https://jsonplaceholder.typicode.com/users/${user.id}/posts`)
-      .then((res) => res.json())
-      .then((posts) => user.posts.push(...posts));
-
-    // Fetch user Comments
-    await fetch(
-      `https://jsonplaceholder.typicode.com/users/${user.id}/comments`
-    )
-      .then((res) => res.json())
-      .then((comments) => user.comments.push(...comments));
-  }
+function onImageLoad(userId) {
+  const user = usersWithGallery.value.find((u) => u.id === userId);
+  if (!user) return;
+  const count = (loadedCount.value[userId] || 0) + 1;
+  loadedCount.value = { ...loadedCount.value, [userId]: count };
 }
 
-if (error.value) {
-  console.error('Failed to load images:', error.value);
+function isUserLoading(userId) {
+  const user = usersWithGallery.value.find((u) => u.id === userId);
+  if (!user) return false;
+  const loaded = loadedCount.value[userId] || 0;
+  return loaded < (user.photos?.length ?? 0);
 }
 </script>
 
@@ -115,6 +133,7 @@ if (error.value) {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-height: 320px;
 }
 
 .gallery-user-stats {
@@ -132,19 +151,36 @@ if (error.value) {
   display: flex;
   flex-wrap: wrap;
   gap: clamp(0.5rem, 1.5vw, 1rem);
+  position: relative;
+  min-height: 120px;
 }
-.img-gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.photo {
+
+.photo-wrap {
   flex: 1 1 220px;
   width: min(100%, 340px);
   min-width: 180px;
-  height: auto;
+  aspect-ratio: 3 / 2;
+  background: #f0f0f0;
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 0.6rem;
   border: 1px solid #e4e4e4;
+}
+
+.gallery-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  color: #666;
 }
 </style>

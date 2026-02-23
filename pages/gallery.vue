@@ -31,7 +31,7 @@
             >
               <img
                 :src="img.picture"
-                :alt="img.title"
+                :alt="img.title || `Gallery photo by ${user.name}`"
                 class="photo"
                 loading="lazy"
               />

@@ -1,5 +1,6 @@
 html {
   box-sizing: border-box;
+  height: 100%;
 }
 
 *,
@@ -11,6 +12,13 @@ html {
 body {
   font-family: Arial, sans-serif;
   margin: 0;
+  min-height: 100vh;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 header {
@@ -25,6 +33,7 @@ header {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  flex: 1;
   width: 100%;
   max-width: 1300px;
   margin: 0 auto;

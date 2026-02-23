@@ -21,15 +21,11 @@ This will be discussed during the interview.
 > [!TIP]
 > :art: **(Extra Bonus)** Do not use media queries.
 
-### Answer
-
-<div style="color: red;">
-
-We used a **flex** solution for responsiveness. The flex layout is applied to the `.wrapper` in `assets/css/main.css`, which wraps the main content area (nav, main, sidebar). This makes all pages responsive across desktop, tablet, and mobile—without media queries—because the flex items naturally wrap and reflow as the viewport shrinks.
-
-We could also use **CSS Grid** (e.g. `grid-template-columns: repeat(auto-fill, minmax(...))`) to achieve responsiveness, but we chose flex because it is simpler to write and easier to reason about for this layout.
-
-</div>
+> **Answer**  
+>
+> We used a **flex** solution for responsiveness. The flex layout is applied to the `.wrapper` in `assets/css/main.css`, which wraps the main content area (nav, main, sidebar). This makes all pages responsive across desktop, tablet, and mobile—without media queries—because the flex items naturally wrap and reflow as the viewport shrinks.
+>
+> We could also use **CSS Grid** (e.g. `grid-template-columns: repeat(auto-fill, minmax(...))`) to achieve responsiveness, but we chose flex because it is simpler to write and easier to reason about for this layout.
 
 ## 2. To-do list
 
@@ -45,15 +41,11 @@ Few examples:
 > [!TIP]
 > :art: **(Extra Bonus)** Do not use JavaScript.
 
-### Answer
-
-<div style="color: red;">
-
-We apply filters through the `status` query parameter. We use **VueUse** (`useUrlSearchParams`) to read the query param from the URL. When the user checks or unchecks a filter checkbox (Show completed / Show pending), we update the query param via Vue Router—no page reload. The page reads `status` from the URL and filters the list accordingly (`completed`, `pending`, or `all`).
-
-The same approach can be used for other filters such as the limit of displayed tasks: add a `limit` query param and read it to slice the list. Likewise, check/uncheck state for individual todo items can be driven by query params (e.g. `completedIds=1,2,3`) so that the URL fully reflects the UI and can be shared or bookmarked.
-
-</div>
+> **Answer**  
+>
+> We apply filters through the `status` query parameter. We use **VueUse** (`useUrlSearchParams`) to read the query param from the URL. When the user checks or unchecks a filter checkbox (Show completed / Show pending), we update the query param via Vue Router—no page reload. The page reads `status` from the URL and filters the list accordingly (`completed`, `pending`, or `all`).
+>
+> The same approach can be used for other filters such as the limit of displayed tasks: add a `limit` query param and read it to slice the list. Likewise, check/uncheck state for individual todo items can be driven by query params (e.g. `completedIds=1,2,3`) so that the URL fully reflects the UI and can be shared or bookmarked.
 
 ## 3. Page loading performance
 
@@ -63,31 +55,24 @@ Navigate to the `/gallery` page which contains a list of photos and some user st
   <br/> Try to suggest something that the team can easily align on and let them find their own solutions to implement it.
   <br/> Optionally, include a brief code draft or example to illustrate how to begin applying your recommendation.
 
-### Answer
+> **Answer**  
+>
+> We always want to focus on solutions that remove any blockage for the main thread and thus reduce page load time.
+>
+> The old implementation's performance was quite good in page loading time, including LCP (less than 2 seconds), but we had a problem with layout shift at 0.7. Thus, these are my recommendations:
+>
+> - Always try to reduce the number of API calls—this benefits both the frontend and backend. (I can discuss more details during the interview.)
+> - Lazy load images.
+> - Use placeholders and set min-height to reduce layout shift.
+> - For large datasets, use pagination for API retrieval.
+> - For rendering large lists, use virtualization.
+>
+> I applied the above steps in my solution by having one endpoint for users that returns a list of users with each user's stats, and another endpoint for the gallery. I also lazy-loaded images.
+>
+> Based on these changes, layout shift improved from 0.7 to 0.10, and LCP was already good but I feel it's improved by a few ms.
 
-<div style="color: red;">
-
-We always want to focus on solutions that remove any blockage for the main thread and thus reduce page load time.
-
-The old implementation's performance was quite good in page loading time, including LCP (less than 2 seconds), but we had a problem with layout shift at 0.7. Thus, these are my recommendations:
-
-- Always try to reduce the number of API calls—this benefits both the frontend and backend. (I can discuss more details during the interview.)
-- Lazy load images.
-- Use placeholders and set min-height to reduce layout shift.
-- For large datasets, use pagination for API retrieval.
-- For rendering large lists, use virtualization.
-
-I applied the above steps in my solution by having one endpoint for users that returns a list of users with each user's stats, and another endpoint for the gallery. I also lazy-loaded images.
-
-Based on these changes, layout shift improved from 0.7 to 0.10, and LCP was already good but I feel it's improved by a few ms.
-
-</div>
-
-<div style="background-color: #fff3cd; padding: 1rem; border-radius: 4px; border-left: 4px solid #ffc107; margin-top: 1rem;">
-
-**⚠️ Warning:** The gallery page will not work on localhost as JSONPlaceholder has connection issues on our created endpoint, but it will work on Vercel.
-
-</div>
+> [!WARNING]
+> **Warning:** The gallery page will not work on localhost as JSONPlaceholder has connection issues on our created endpoint, but it will work on Vercel.
 
 ## 4. Architecture
 
@@ -103,53 +88,41 @@ You can choose one of the following approach as example:
 
 **(Bonus)** Could Nuxt be used as a full backend? In what scenarios would that make sense, and what might be the limitations?
 
-### Answer
-
-<div style="color: red;">
-
-- **BFF** is used mainly as a bridge between the frontend and main endpoints. It is useful for things like handling multiple API calls (as server-to-server is faster than client-to-server) and can also be used for simple CRUD operations. However, it cannot be used for complex logic, which is the most usual case. In our case, BFF can be a good solution for having simple logic.
-
-- **SSG** is not the best fit here. We can use SSG when the user gallery is static and not affected by user interactions, which is not our case—it is expected that these images come from user interaction.
-
-- To improve our API calls, we can add caching and also use better approaches that can improve our API call time by requesting only the required fields—for example, by using GraphQL.
-- We should add correct DTOs that represent communication objects between client and server. (Not implemented in my solution.)
-
-</div>
+> **Answer**  
+>
+> - **BFF** is used mainly as a bridge between the frontend and main endpoints. It is useful for things like handling multiple API calls (as server-to-server is faster than client-to-server) and can also be used for simple CRUD operations. However, it cannot be used for complex logic, which is the most usual case. In our case, BFF made with Nuxt can be a good solution for having simple logic.
+>
+> - **SSG** is not the best fit here. We can use SSG when the user gallery is static and not affected by user interactions, which is not our case—it is expected that these images come from user interaction.
+>
+> - To improve our API calls, we can add caching and also use better approaches that can improve our API call time by requesting only the required fields—for example, by using GraphQL.
+> - We should add correct DTOs that represent communication objects between client and server. (Not implemented in my solution.)
 
 ## Testing
 
 Implement tests for the gallery and the todo list components.
 
-<div style="color: red;">
-
-I added component testing using **Vue Testing Library** for mounting and **Vue Test Utils** for assertion. I accessed elements by their roles (e.g. `listitem`, `img`, `heading`, `checkbox`) to test both accessibility and behavior.
-
-I did not add e2e tests. For e2e testing I mostly use **Cypress** and **TestCafe**.
-
-</div>
+> **Answer**  
+>
+> I added component testing using **Vue Testing Library** for mounting and **Vue Test Utils** for assertion. I accessed elements by their roles (e.g. `listitem`, `img`, `heading`, `checkbox`) to test both accessibility and behavior.
+>
+> I did not add e2e tests. For e2e testing I mostly use **Cypress** and **TestCafe**.
 
 ## (Bonus) Accessibility
 
 What can you say regarding the actual accessibility of the website?
 Where would you start if you were to improve it? You can present a rough plan of action or a few code examples.
 
-### Answer
-## Try to make your app WCAG compliant: 
-<div style="color: red;">
-
-
-- We should focus on using semantic HTML correctly. For example, we fixed the issue of using a link directly inside a list (`ul`)—links should be wrapped in `li` elements (see `AwesomeNavbar.vue`).
-- We should focus on using correct color contrast and adequate spacing.
-- We should support keyboard navigation and add tab support.
-- Add `lang` attribute on `<html>`.
-- Provide meaningful alt text for images/icons.
-- There is overlap between accessibility and SEO: we should have meta keywords for the website and use SSG to expose it to search engines.
-- We can use Lighthouse to measure accessibility.
-- We should always ensure using `aria-label` for non-semantic elements like `div`s.
-- When writing component tests, we should access components by their roles.
-
-
-</div>
+> **Answer – Try to make your app WCAG compliant:**  
+>
+> - We should focus on using semantic HTML correctly. For example, we fixed the issue of using a link directly inside a list (`ul`)—links should be wrapped in `li` elements (see `AwesomeNavbar.vue`).
+> - We should focus on using correct color contrast and adequate spacing.
+> - We should support keyboard navigation and add tab support.
+> - Add `lang` attribute on `<html>`.
+> - Provide meaningful alt text for images/icons.
+> - There is overlap between accessibility and SEO: we should have meta keywords for the website and use SSG to expose it to search engines.
+> - We can use Lighthouse to measure accessibility.
+> - We should always ensure using `aria-label` for non-semantic elements like `div`s.
+> - When writing component tests, we should access components by their roles.
 
 ## Setup
 

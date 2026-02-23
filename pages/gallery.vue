@@ -3,11 +3,12 @@
     <h2>Gallery</h2>
     <div v-if="usersPending">Loading…</div>
     <div v-else-if="usersError">Error loading users: {{ usersError.message }}</div>
-    <div v-else class="gallery-users">
-      <div
+    <ul v-else class="gallery-users" role="list">
+      <li
         v-for="(user, index) in users"
         :key="user.id"
         class="gallery-user-card"
+        role="listitem"
       >
         <hr v-if="index !== 0" />
         <h2>{{ user.name }}</h2>
@@ -38,8 +39,8 @@
             </div>
           </template>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -81,6 +82,9 @@ watch(
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .gallery-user-card {

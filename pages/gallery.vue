@@ -1,7 +1,7 @@
 <template>
   <div class="gallery-page">
     <h2>Gallery</h2>
-    <div v-if="usersPending">Loading…</div>
+    <div v-if="usersPending" class="gallery-users-loading">Loading…</div>
     <div v-else-if="usersError">Error loading users: {{ usersError.message }}</div>
     <ul v-else class="gallery-users" role="list">
       <li
@@ -76,6 +76,13 @@ watch(
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.gallery-users-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gallery-users {

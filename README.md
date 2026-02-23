@@ -59,12 +59,17 @@ Navigate to the `/gallery` page which contains a list of photos and some user st
 >
 > We always want to focus on solutions that remove any blockage for the main thread and thus reduce page load time.
 >
-> The old implementation's performance was quite good in page loading time, including LCP (less than 2 seconds), but we had a problem with layout shift at 0.7. Thus, these are my recommendations:
+> The old implementation's performance was quite good in page loading time, including LCP (less than 2 seconds), but we had a problem with layout shift at 0.
+
+We found issue in layout shift also , I would recommend the team implement **Aspect Ratio Boxes** and **CSS Containment**. By reserving the exact geometric space for images before the data arrives, we decouple the layout from the network speed.
+
+7. Thus, these are my recommendations:
 >
-> - Always try to reduce the number of API calls—this benefits both the frontend and backend. (I can discuss more details during the interview.)
+> - For data orchestration always try to reduce the number of API calls—this benefits both the frontend and backend. (I can discuss more details during the interview.)
 > - Lazy load images.
 > - Use placeholders and set min-height to reduce layout shift.
-> - For large datasets, use pagination for API retrieval.
+>
+> - For large datasets, use pagination for API retrieval, and  prefer shallowRef  when you don’t need deep reactivity to reduce tracking overhead.
 > - For rendering large lists, use virtualization.
 >
 > I applied the above steps in my solution by having one endpoint for users that returns a list of users with each user's stats, and another endpoint for the gallery. I also lazy-loaded images.
@@ -90,10 +95,9 @@ You can choose one of the following approach as example:
 
 > **Answer**  
 >
-> - **BFF** ( done with Nuxt ) is used mainly as a bridge between the frontend and main BE endpoints. It is useful for things like handling multiple API calls (as server-to-server is faster than client-to-server) and can also be used for simple CRUD operations . Also useful for hiding senstive data like API keys , tokens and secrets. However, it cannot be used for complex logic and scaling, which is the most usual case. In our case, BFF made with Nuxt can be a good solution for having simple logic.
->
-> - **SSG** is not the best fit here. We can use SSG when the user gallery is static and not affected by user interactions, which is not our case—it is expected that these images come from user interaction.
->
+> - **BFF** (implemented with Nuxt server routes) is mainly used as a bridge between the frontend and the main backend endpoints. It's useful for aggregating multiple API calls, shaping responses to match frontend needs, and hiding sensitive data such as API keys, tokens, and secrets. It can also handle simple CRUD operations and light orchestration logic. 
+  However, a BFF layer is generally not ideal for heavy vertical scaling or complex domain logic. As traffic and business rules grow, this logic should live in a dedicated backend service designed for scalability and maintainability. In our case, since the logic is simple and the API acts mostly as a thin proxy, using a Nuxt-based BFF is a reasonable first iteration.
+> - **SSG** (Static Site Generation) is not the best fit here because it works best for content that does not require frequent updates. If the gallery data is dynamic or frequently updated by users, SSG would struggle with data freshness unless we introduce revalidation or rebuild strategies. Therefore, it's less suitable when fresh, user-driven data is required.
 > - To improve our API calls, we can add caching and also use better approaches that can improve our API call time by requesting only the required fields—for example, by using GraphQL.
 > - We should add correct DTOs that represent communication objects between client and server. (Not implemented in my solution.)
 

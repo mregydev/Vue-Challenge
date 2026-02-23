@@ -91,6 +91,12 @@ Based on these changes, layout shift improved from 0.7 to 0.10, and LCP was alre
 
 </div>
 
+<div style="background-color: #fff3cd; padding: 1rem; border-radius: 4px; border-left: 4px solid #ffc107; margin-top: 1rem;">
+
+**⚠️ Warning:** The gallery page will not work on localhost as JSONPlaceholder has connection issues, but it will work on Vercel.
+
+</div>
+
 ## 4. Architecture
 
 The Gallery currently fetches its data from `/api/gallery`, using a [Nuxt server route](https://nuxt.com/docs/guide/directory-structure/server#api-routes) which acts as a minimal Backend-for-Frontend (BFF).

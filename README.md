@@ -1,19 +1,11 @@
 # Frontend Coding Challenge
 
-This project is a basic Nuxt 3 (https://nuxt.com/docs/getting-started/introduction) app which uses some free API data to fetch a list of users and display their information in a list.
 
-By clicking on one of the elements in the list, you are redirected to the user's profile, which contains the user's todo list.
+
+**Live demo:** [https://vue-challenge-nu.vercel.app/gallery](https://vue-challenge-nu.vercel.app/gallery)
 
 ## Goal
 
-Please take no more than ~2 hours for this task. We are aware of everyone’s time limitations and appreciate you taking time to complete this challenge.
-Let us know if you have any questions. We’d prefer to talk about a problem first before investing too much time into the wrong solution. We are happy to help!
-
-The goal of the exercise is not to search or implement the perfect solution but rather to discuss the pros and cons of the different approaches on the different tasks. Try to focus on providing a working solution.
-
-There are no right or wrong answers.
-
-Feel free to ask any questions if anything is not clear!
 
 ## 1. Responsiveness
 
@@ -126,7 +118,15 @@ You can choose one of the following approach as example:
 
 ## Testing
 
-Implement tests for the gallery and the todo list components
+Implement tests for the gallery and the todo list components.
+
+<div style="color: red;">
+
+I added component testing using **Vue Testing Library** for mounting and **Vue Test Utils** for assertion. I accessed elements by their roles (e.g. `listitem`, `img`, `heading`, `checkbox`) to test both accessibility and behavior.
+
+I did not add e2e tests. For e2e testing I mostly use **Cypress** and **TestCafe**.
+
+</div>
 
 ## (Bonus) Accessibility
 

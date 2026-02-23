@@ -90,7 +90,7 @@ You can choose one of the following approach as example:
 
 > **Answer**  
 >
-> - **BFF** is used mainly as a bridge between the frontend and main endpoints. It is useful for things like handling multiple API calls (as server-to-server is faster than client-to-server) and can also be used for simple CRUD operations. However, it cannot be used for complex logic, which is the most usual case. In our case, BFF made with Nuxt can be a good solution for having simple logic.
+> - **BFF** ( done with Nuxt ) is used mainly as a bridge between the frontend and main BE endpoints. It is useful for things like handling multiple API calls (as server-to-server is faster than client-to-server) and can also be used for simple CRUD operations . Also useful for hiding senstive data like API keys , tokens and secrets. However, it cannot be used for complex logic and scaling, which is the most usual case. In our case, BFF made with Nuxt can be a good solution for having simple logic.
 >
 > - **SSG** is not the best fit here. We can use SSG when the user gallery is static and not affected by user interactions, which is not our case—it is expected that these images come from user interaction.
 >

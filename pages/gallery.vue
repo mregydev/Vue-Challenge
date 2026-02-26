@@ -53,7 +53,7 @@ const {
 
 const users = computed(() => usersData.value?.users ?? []);
 
-const galleryByUser = ref({});
+const galleryByUser = shallowRef({});
 
 watch(
   users,

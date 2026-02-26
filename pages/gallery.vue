@@ -60,7 +60,7 @@ watch(
   (userList) => {
     if (!userList?.length) return;
     userList.forEach(async (u) => {
-      const photos = await $fetch(`/api/gallery/${u.id}`);
+      const photos = await $fetch(`/api/gallery/${u.id}`,{server: false});
       galleryByUser.value = {
         ...galleryByUser.value,
         [u.id]: photos ?? [],

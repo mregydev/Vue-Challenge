@@ -132,8 +132,7 @@ watch(
 
 .photo-wrap {
   flex: 1 1 220px;
-  width: min(100%, 340px);
-  min-width: 180px;
+  width: 340px;
   aspect-ratio: 3 / 2;
   background: #f0f0f0;
   border-radius: 0.6rem;
